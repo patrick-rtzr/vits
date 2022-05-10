@@ -8,7 +8,7 @@ import torch.utils.data
 import commons 
 from mel_processing import spectrogram_torch
 from utils import load_wav_to_torch, load_filepaths_and_text
-from text import text_to_sequence, cleaned_text_to_sequence
+from text import text_to_sequence
 
 
 class TextAudioLoader(torch.utils.data.Dataset):
@@ -19,7 +19,6 @@ class TextAudioLoader(torch.utils.data.Dataset):
     """
     def __init__(self, audiopaths_and_text, hparams):
         self.audiopaths_and_text = load_filepaths_and_text(audiopaths_and_text)
-        self.text_cleaners  = hparams.text_cleaners
         self.max_wav_value  = hparams.max_wav_value
         self.sampling_rate  = hparams.sampling_rate
         self.filter_length  = hparams.filter_length 
@@ -84,7 +83,7 @@ class TextAudioLoader(torch.utils.data.Dataset):
         if self.cleaned_text:
             text_norm = cleaned_text_to_sequence(text)
         else:
-            text_norm = text_to_sequence(text, self.text_cleaners)
+            text_norm = text_to_sequence(text)
         if self.add_blank:
             text_norm = commons.intersperse(text_norm, 0)
         text_norm = torch.LongTensor(text_norm)
@@ -157,7 +156,6 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
     """
     def __init__(self, audiopaths_sid_text, hparams):
         self.audiopaths_sid_text = load_filepaths_and_text(audiopaths_sid_text)
-        self.text_cleaners = hparams.text_cleaners
         self.max_wav_value = hparams.max_wav_value
         self.sampling_rate = hparams.sampling_rate
         self.filter_length  = hparams.filter_length
@@ -222,7 +220,7 @@ class TextAudioSpeakerLoader(torch.utils.data.Dataset):
         if self.cleaned_text:
             text_norm = cleaned_text_to_sequence(text)
         else:
-            text_norm = text_to_sequence(text, self.text_cleaners)
+            text_norm = text_to_sequence(text)
         if self.add_blank:
             text_norm = commons.intersperse(text_norm, 0)
         text_norm = torch.LongTensor(text_norm)
